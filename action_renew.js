@@ -183,7 +183,9 @@ async function launchChrome() {
         '--window-size=1280,720',
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--user-data-dir=/tmp/chrome_user_data' // 必须指定用户数据目录，否则远程调试可能失败
+        `--user-data-dir=/tmp/chrome_user_data_${Date.now()}`, // 动态目录，避免锁文件冲突
+        '--disable-extensions',
+        '--disable-infobars'
     ];
 
     if (PROXY_CONFIG) {
@@ -196,7 +198,7 @@ async function launchChrome() {
 
     const chrome = spawn(CHROME_PATH, args, {
         detached: true,
-        stdio: 'ignore'
+        stdio: 'inherit' // 改为 inherit 以便在日志中直接看到 Chrome 的启动错误
     });
     chrome.unref();
 
